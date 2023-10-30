@@ -1,0 +1,21 @@
+[
+  {
+    "name": "WolfyDev",
+    "master": true,
+    "password_hash": "$2a$11$ytW6S/5OsQbxJhvYnneLgeLc./IUjg4n7A7VWNCdt4lNGAUWlKKQ.",
+    "providers": {
+      "citizenfx": {
+        "id": "WolfyDev",
+        "identifier": "fivem:6862164",
+        "data": {
+          "sub": "3e0368452b199e9981e6b6f90a7203db",
+          "nameid": "https://forum.cfx.re/internal/user/6862164",
+          "name": "WolfyDev",
+          "picture": "https://forum.cfx.re/user_avatar/forum.cfx.re/wolfydev/256/3462388_2.png",
+          "profile": "https://forum.cfx.re/u/WolfyDev"
+        }
+      }
+    },
+    "permissions": []
+  }
+]
