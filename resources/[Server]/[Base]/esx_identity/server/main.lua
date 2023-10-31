@@ -362,32 +362,74 @@ else
         end)
     end
 
-    ESX.RegisterServerCallback('esx_identity:registerIdentity', function(source, cb, data)
+    lib.callback.register('esx_identity:registerIdentity', function(source, data)
         local xPlayer = ESX.GetPlayerFromId(source)
         if not checkNameFormat(data.firstname) then
-            TriggerClientEvent('esx:showNotification', source, TranslateCap('invalid_firstname_format'), "error")
-            return cb(false)
+            TriggerClientEvent('ox_lib:notify', source, {
+                id = "esx_identity:ox_lib:invalid_firstname_format",
+                title = TranslateCap('invalid_firstname_format'),
+                icon = "fas fa-id-card",
+                duration = 3500,
+                position = "bottom",
+                type = "error"
+            })
+            return false
         end
         if not checkNameFormat(data.lastname) then
-            TriggerClientEvent('esx:showNotification', source, TranslateCap('invalid_lastname_format'), "error")
-            return cb(false)
+            TriggerClientEvent('ox_lib:notify', source, {
+                id = "esx_identity:ox_lib:invalid_lastname_format",
+                title = TranslateCap('invalid_lastname_format'),
+                icon = "fas fa-id-card",
+                duration = 3500,
+                position = "bottom",
+                type = "error"
+            })
+            return false
         end
         if not checkSexFormat(data.sex) then
-            TriggerClientEvent('esx:showNotification', source, TranslateCap('invalid_sex_format'), "error")
-            return cb(false)
+            TriggerClientEvent('ox_lib:notify', source, {
+                id = "esx_identity:ox_lib:invalid_sex_format",
+                title = TranslateCap('invalid_sex_format'),
+                icon = "fas fa-id-card",
+                duration = 3500,
+                position = "bottom",
+                type = "error"
+            })
+            return false
         end
         if not checkDOBFormat(data.dateofbirth) then
-            TriggerClientEvent('esx:showNotification', source, TranslateCap('invalid_dob_format'), "error")
-            return cb(false)
+            TriggerClientEvent('ox_lib:notify', source, {
+                id = "esx_identity:ox_lib:invalid_dob_format",
+                title = TranslateCap('invalid_dob_format'),
+                icon = "fas fa-id-card",
+                duration = 3500,
+                position = "bottom",
+                type = "error"
+            })
+            return false
         end
         if not checkHeightFormat(data.height) then
-            TriggerClientEvent('esx:showNotification', source, TranslateCap('invalid_height_format'), "error")
-            return cb(false)
+            TriggerClientEvent('ox_lib:notify', source, {
+                id = "esx_identity:ox_lib:invalid_height_format",
+                title = TranslateCap('invalid_height_format'),
+                icon = "fas fa-id-card",
+                duration = 3500,
+                position = "bottom",
+                type = "error"
+            })
+            return false
         end
         if xPlayer then
             if alreadyRegistered[xPlayer.identifier] then
-                xPlayer.showNotification(TranslateCap('already_registered'), "error")
-                return cb(false)
+                TriggerClientEvent('ox_lib:notify', xPlayer, {
+                    id = "esx_identity:ox_lib:already_registered",
+                    title = TranslateCap('already_registered'),
+                    icon = "fas fa-id-card",
+                    duration = 3500,
+                    position = "bottom",
+                    type = "error"
+                })
+                return false
             end
 
             playerIdentity[xPlayer.identifier] = {
@@ -410,12 +452,19 @@ else
             saveIdentityToDatabase(xPlayer.identifier, currentIdentity)
             alreadyRegistered[xPlayer.identifier] = true
             playerIdentity[xPlayer.identifier] = nil
-            return cb(true)
+            return true
         end
 
         if not multichar then
-            TriggerClientEvent("esx:showNotification", source, TranslateCap('data_incorrect'), "error")
-            return cb(false)
+            TriggerClientEvent('ox_lib:notify', source, {
+                id = "esx_identity:ox_lib:data_incorrect",
+                title = TranslateCap('data_incorrect'),
+                icon = "fas fa-id-card",
+                duration = 3500,
+                position = "bottom",
+                type = "error"
+            })
+            return false
         end
 
         local formattedFirstName = formatName(data.firstname)
@@ -435,7 +484,7 @@ else
 
         TriggerEvent('esx_identity:completedRegistration', source, data)
         TriggerClientEvent('esx_identity:setPlayerData', source, Identity)
-        cb(true)
+        return true
     end)
 end
 

@@ -45,19 +45,20 @@ if not Config.UseDeferrals then
     RegisterNetEvent('esx_identity:showRegisterIdentity', function()
         TriggerEvent('esx_skin:resetFirstSpawn')
         while not (ready and loadingScreenFinished) do
-            print('Waiting for esx_identity NUI..')
+            lib.print.info('Waiting for esx_identity NUI..')
             Wait(100)
         end
         if not ESX.PlayerData.dead then setGuiState(true) end
     end)
 
-    RegisterNUICallback('register', function(data,cb)
+    RegisterNUICallback('register', function(data, cb)
         if not guiEnabled then
             return
         end
 
-        ESX.TriggerServerCallback('esx_identity:registerIdentity', function(callback)
+        lib.callback('esx_identity:registerIdentity', 250, function(callback)
             if not callback then
+                lib.print.info('esx_identity:registerIdentity failed')
                 return
             end
 
