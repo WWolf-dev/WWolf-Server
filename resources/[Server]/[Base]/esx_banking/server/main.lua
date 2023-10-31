@@ -56,7 +56,13 @@ AddEventHandler('esx_banking:doingType', function(typeData)
     amount = ESX.Math.Round(amount)
 
     if amount == nil or (not typeData.pincode and amount <= 0) then
-        TriggerClientEvent("esx:showNotification", source, TranslateCap('invalid_amount'), "error")
+        TriggerClientEvent('ox_lib:notify', source, {
+            id = "esx_banking:ox_lib:invalid_amount",
+            title = TranslateCap('invalid_amount'),
+            duration = 3500,
+            position = "bottom",
+            type = "error"
+        })
     else
         if typeData.deposit and amount <= money then
             -- deposit
@@ -70,12 +76,24 @@ AddEventHandler('esx_banking:doingType', function(typeData)
         elseif typeData.transfer then
             -- transfer
             if tonumber(typeData.transfer.playerId) <= 0 then
-                TriggerClientEvent("esx:showNotification", source, TranslateCap("cant_do_it"), "error")
+                TriggerClientEvent('ox_lib:notify', source, {
+                    id = "esx_banking:ox_lib:cant_do_it",
+                    title = TranslateCap("cant_do_it"),
+                    duration = 3500,
+                    position = "bottom",
+                    type = "error"
+                })
                 return
             end
 
             if bankMoney < amount then
-                TriggerClientEvent("esx:showNotification", source, TranslateCap('not_enough_money', amount), "error")
+                TriggerClientEvent('ox_lib:notify', source, {
+                    id = "esx_banking:ox_lib:not_enough_money",
+                    title = TranslateCap('not_enough_money', amount),
+                    duration = 3500,
+                    position = "bottom",
+                    type = "error"
+                })
                 return
             end
 
@@ -84,17 +102,34 @@ AddEventHandler('esx_banking:doingType', function(typeData)
                 return
             end
         else
-            TriggerClientEvent("esx:showNotification", source, TranslateCap('not_enough_money', amount), "error")
+            TriggerClientEvent('ox_lib:notify', source, {
+                id = "esx_banking:ox_lib:not_enough_money",
+                title = TranslateCap('not_enough_money', amount),
+                duration = 3500,
+                position = "bottom",
+                type = "error"
+            })
             return
         end
 
         money = xPlayer.getAccount('money').money
         bankMoney = xPlayer.getAccount('bank').money
         if typeData.transfer then
-            TriggerClientEvent("esx:showNotification", source,
-                TranslateCap(string.format('%s_money', key), amount, typeData.transfer.playerId), "success")
+            TriggerClientEvent('ox_lib:notify', source, {
+                id = "esx_banking:ox_lib:transfer_1",
+                title = TranslateCap(string.format('%s_money', key), amount, typeData.transfer.playerId),
+                duration = 3500,
+                position = "bottom",
+                type = "success"
+            })
         else
-            TriggerClientEvent("esx:showNotification", source, TranslateCap(string.format('%s_money', key), typeData.pincode and (string.format("%04d", amount)) or amount), "success")
+            TriggerClientEvent('ox_lib:notify', source, {
+                id = "esx_banking:ox_lib:transfer_2",
+                title = TranslateCap(string.format('%s_money', key), typeData.pincode and (string.format("%04d", amount)) or amount),
+                duration = 3500,
+                position = "bottom",
+                type = "success"
+            })
         end
         if not typeData.pincode then
             BANK.LogTransaction(source,string.upper(key), string.upper(key), amount, bankMoney)
@@ -105,7 +140,7 @@ AddEventHandler('esx_banking:doingType', function(typeData)
 end)
 
 -- register callbacks
-ESX.RegisterServerCallback("esx_banking:getPlayerData", function(source, cb)
+lib.callback.register("esx_banking:getPlayerData", function(source)
     local xPlayer = ESX.GetPlayerFromId(source)
     local identifier = xPlayer.getIdentifier()
     local weekAgo = (os.time() - 604800) * 1000
@@ -118,15 +153,15 @@ ESX.RegisterServerCallback("esx_banking:getPlayerData", function(source, cb)
         transactionHistory = transactionHistory
     }
 
-    cb(playerData)
+    return(playerData)
 end)
 
-ESX.RegisterServerCallback("esx_banking:checkPincode", function(source, cb, inputPincode)
+lib.callback.register("esx_banking:checkPincode", function(source, inputPincode)
     local xPlayer = ESX.GetPlayerFromId(source)
     local identifier = xPlayer.getIdentifier()
     local pincode = MySQL.Sync.fetchScalar('SELECT COUNT(1) AS pincode FROM users WHERE identifier = ? AND pincode = ?',
         {identifier, inputPincode})
-    cb(pincode > 0)
+    return(pincode > 0)
 end)
 
 function logTransaction(targetSource,label, key,amount)
@@ -200,7 +235,13 @@ BANK = {
     end,
     Transfer = function(xTarget, xPlayer, amount, key)
         if xTarget == nil or xPlayer.source == xTarget.source then
-            TriggerClientEvent("esx:showNotification", source, TranslateCap("cant_do_it"), "error")
+            TriggerClientEvent('ox_lib:notify', source, {
+                id = "esx_banking:ox_lib:cant_do_it",
+                title = TranslateCap("cant_do_it"),
+                duration = 3500,
+                position = "bottom",
+                type = "error"
+            })
             return false
         end
 
@@ -208,9 +249,13 @@ BANK = {
         xTarget.addAccountMoney('bank', amount)
         local bankMoney = xTarget.getAccount('bank').money
         BANK.LogTransaction(xTarget.source, "TRANSFER_RECEIVE", amount, bankMoney)
-        TriggerClientEvent("esx:showNotification", xTarget.source, TranslateCap('receive_transfer', amount, xPlayer.source),
-            "success")
-
+        TriggerClientEvent('ox_lib:notify', xTarget.source, {
+            id = "esx_banking:ox_lib:receive_transfer",
+            title = TranslateCap('receive_transfer', amount, xPlayer.source),
+            duration = 3500,
+            position = "bottom",
+            type = "success"
+        })
         return true
     end,
     Pincode = function(amount, identifier)

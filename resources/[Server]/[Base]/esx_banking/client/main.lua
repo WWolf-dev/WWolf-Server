@@ -75,9 +75,12 @@ local playerLoaded, uiActive, inMenu = false, false, false
     function BANK:TextUi(state, atm)
         uiActive = state
         if not state then
-            return ESX.HideUI()
+            return lib.hideTextUI()
         end
-        ESX.TextUI(TranslateCap('press_e_banking'))
+        lib.showTextUI(TranslateCap('press_e_banking'), {
+            position = 'left-center',
+            icon = 'fas fa-university',
+        })
         CreateThread(function()
             while uiActive do
                 if IsControlJustReleased(0, 38) then
@@ -133,7 +136,7 @@ local playerLoaded, uiActive, inMenu = false, false, false
             })
             return
         end
-        ESX.TriggerServerCallback('esx_banking:getPlayerData', function(data)
+        lib.callback('esx_banking:getPlayerData', 250, function(data)
             SendNUIMessage({
                 showMenu = true,
                 openATM = atm,
@@ -244,18 +247,30 @@ RegisterNUICallback('checkPincode', function(data, cb)
         return cb('ok')
     end
 
-    ESX.TriggerServerCallback("esx_banking:checkPincode", function(pincode)
+    lib.callback("esx_banking:checkPincode", 250, function(pincode)
         if pincode then
             cb({
                 success = true
             })
-            ESX.ShowNotification(TranslateCap('pincode_found'), "success")
+            lib.notify({
+                id = "esx_banking:ox_lib:pincode_found",
+                title = TranslateCap('pincode_found'),
+                duration = 3500,
+                position = 'bottom',
+                type = 'success'
+            })
 
         else
             cb({
                 error = true
             })
-            ESX.ShowNotification(TranslateCap('pincode_not_found'), "error")
+            lib.notify({
+                id = "esx_banking:ox_lib:pincode_not_found",
+                title = TranslateCap('pincode_not_found'),
+                duration = 3500,
+                position = 'bottom',
+                type = 'error'
+            })
         end
     end, data)
 end)
