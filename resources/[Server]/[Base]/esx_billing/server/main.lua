@@ -33,8 +33,7 @@ end)
 ESX.RegisterServerCallback('esx_billing:getBills', function(source, cb)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
-	MySQL.query('SELECT amount, id, label FROM billing WHERE identifier = ?', {xPlayer.identifier},
-	function(result)
+	MySQL.query('SELECT amount, id, label FROM billing WHERE identifier = ?', {xPlayer.identifier}, function(result)
 		cb(result)
 	end)
 end)
