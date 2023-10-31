@@ -61,7 +61,14 @@ if not Config.UseDeferrals then
                 return
             end
 
-            ESX.ShowNotification(TranslateCap('thank_you_for_registering'))
+            lib.notify({
+                id = "esx_identity:ox_lib:thank_you_for_registering",
+                title = TranslateCap('thank_you_for_registering'),
+                icon = "fas fa-id-card",
+                duration = 3500,
+                position = "bottom",
+                type = 'info',
+            })
             setGuiState(false)
 
             if not ESX.GetConfig().Multichar then
