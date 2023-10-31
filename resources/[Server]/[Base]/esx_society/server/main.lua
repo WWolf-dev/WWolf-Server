@@ -50,7 +50,13 @@ AddEventHandler('esx_society:checkSocietyBalance', function(society)
 	end
 
 	TriggerEvent('esx_addonaccount:getSharedAccount', society.account, function(account)
-		TriggerClientEvent("esx:showNotification", xPlayer.source, TranslateCap('check_balance', ESX.Math.GroupDigits(account.money)))
+		TriggerClientEvent('ox_lib:notify', xPlayer.source, {
+			id= "esx_society:ox_lib:check_balance",
+			title = TranslateCap('check_balance', ESX.Math.GroupDigits(account.money)),
+			duration = 3500,
+			position = 'bottom',
+			type = 'info'
+		})
 	end)
 end)
 
@@ -72,9 +78,21 @@ AddEventHandler('esx_society:withdrawMoney', function(societyName, amount)
 		if amount > 0 and account.money >= amount then
 			account.removeMoney(amount)
 			xPlayer.addMoney(amount, TranslateCap('money_add_reason'))
-			xPlayer.showNotification(TranslateCap('have_withdrawn', ESX.Math.GroupDigits(amount)))
+			TriggerClientEvent('ox_lib:notify', xPlayer.source, {
+				id= "esx_society:ox_lib:have_withdrawn",
+				title = TranslateCap('have_withdrawn', ESX.Math.GroupDigits(amount)),
+				duration = 3500,
+				position = 'bottom',
+				type = 'info'
+			})
 		else
-			xPlayer.showNotification(TranslateCap('invalid_amount'))
+			TriggerClientEvent('ox_lib:notify', xPlayer.source, {
+				id= "esx_society:ox_lib:invalid_amount",
+				title = TranslateCap('invalid_amount'),
+				duration = 3500,
+				position = 'bottom',
+				type = 'error'
+			})
 		end
 	end)
 end)
@@ -96,11 +114,23 @@ AddEventHandler('esx_society:depositMoney', function(societyName, amount)
 	if amount > 0 and xPlayer.getMoney() >= amount then
 		TriggerEvent('esx_addonaccount:getSharedAccount', society.account, function(account)
 			xPlayer.removeMoney(amount, TranslateCap('money_remove_reason'))
-			xPlayer.showNotification(TranslateCap('have_deposited', ESX.Math.GroupDigits(amount)))
+			TriggerClientEvent('ox_lib:notify', xPlayer.source, {
+				id= "esx_society:ox_lib:have_deposited",
+				title = TranslateCap('have_deposited', ESX.Math.GroupDigits(amount)),
+				duration = 3500,
+				position = 'bottom',
+				type = 'info'
+			})
 			account.addMoney(amount)
 		end)
 	else
-		xPlayer.showNotification(TranslateCap('invalid_amount'))
+		TriggerClientEvent('ox_lib:notify', xPlayer.source, {
+			id= "esx_society:ox_lib:invalid_amount",
+			title = TranslateCap('invalid_amount'),
+			duration = 3500,
+			position = 'bottom',
+			type = 'error'
+		})
 	end
 end)
 
@@ -119,10 +149,22 @@ AddEventHandler('esx_society:washMoney', function(society, amount)
 
 		MySQL.insert('INSERT INTO society_moneywash (identifier, society, amount) VALUES (?, ?, ?)', {xPlayer.identifier, society, amount},
 		function(rowsChanged)
-			xPlayer.showNotification(TranslateCap('you_have', ESX.Math.GroupDigits(amount)))
+			TriggerClientEvent('ox_lib:notify', xPlayer.source, {
+				id= "esx_society:ox_lib:you_have",
+				title = TranslateCap('you_have', ESX.Math.GroupDigits(amount)),
+				duration = 3500,
+				position = 'bottom',
+				type = 'info'
+			})
 		end)
 	else
-		xPlayer.showNotification(TranslateCap('invalid_amount'))
+		TriggerClientEvent('ox_lib:notify', xPlayer.source, {
+			id= "esx_society:ox_lib:invalid_amount",
+			title = TranslateCap('invalid_amount'),
+			duration = 3500,
+			position = 'bottom',
+			type = 'error'
+		})
 	end
 end)
 
@@ -288,14 +330,50 @@ ESX.RegisterServerCallback('esx_society:setJob', function(source, cb, identifier
 	xTarget.setJob(job, grade)
 
 	if actionType == 'hire' then
-		xTarget.showNotification(TranslateCap('you_have_been_hired', job))
-		xPlayer.showNotification(TranslateCap("you_have_hired", xTarget.getName()))
+		TriggerClientEvent('ox_lib:notify', xTarget.source, {
+			id= "esx_society:ox_lib:you_have_been_hired",
+			title = TranslateCap('you_have_been_hired', job),
+			duration = 3500,
+			position = 'bottom',
+			type = 'info'
+		})
+		TriggerClientEvent('ox_lib:notify', xPlayer.source, {
+			id= "esx_society:ox_lib:you_have_hired",
+			title = TranslateCap("you_have_hired", xTarget.getName()),
+			duration = 3500,
+			position = 'bottom',
+			type = 'info'
+		})
 	elseif actionType == 'promote' then
-		xTarget.showNotification(TranslateCap('you_have_been_promoted'))
-		xPlayer.showNotification(TranslateCap("you_have_promoted", xTarget.getName(), xTarget.getJob().label))
+		TriggerClientEvent('ox_lib:notify', xTarget.source, {
+			id= "esx_society:ox_lib:you_have_been_promoted",
+			title = TranslateCap('you_have_been_promoted'),
+			duration = 3500,
+			position = 'bottom',
+			type = 'info'
+		})
+		TriggerClientEvent('ox_lib:notify', xPlayer.source, {
+			id= "esx_society:ox_lib:you_have_promoted",
+			title = TranslateCap("you_have_promoted", xTarget.getName(), xTarget.getJob().label),
+			duration = 3500,
+			position = 'bottom',
+			type = 'info'
+		})
 	elseif actionType == 'fire' then
-		xTarget.showNotification(TranslateCap('you_have_been_fired', xTarget.getJob().label))
-		xPlayer.showNotification(TranslateCap("you_have_fired", xTarget.getName()))
+		TriggerClientEvent('ox_lib:notify', xTarget.source, {
+			id= "esx_society:ox_lib:you_have_been_fired",
+			title = TranslateCap('you_have_been_fired', xTarget.getJob().label),
+			duration = 3500,
+			position = 'bottom',
+			type = 'info'
+		})
+		TriggerClientEvent('ox_lib:notify', xPlayer.source, {
+			id= "esx_society:ox_lib:you_have_fired",
+			title = TranslateCap("you_have_fired", xTarget.getName()),
+			duration = 3500,
+			position = 'bottom',
+			type = 'info'
+		})
 	end
 
 	cb()
@@ -420,7 +498,13 @@ function WashMoneyCRON(d, h, m)
 
 			-- send notification if player is online
 			if xPlayer then
-				xPlayer.showNotification(TranslateCap('you_have_laundered', ESX.Math.GroupDigits(result[i].amount)))
+				TriggerClientEvent('ox_lib:notify', xPlayer.source, {
+					id= "esx_society:ox_lib:you_have_laundered",
+					title = TranslateCap('you_have_laundered', ESX.Math.GroupDigits(result[i].amount)),
+					duration = 3500,
+					position = 'bottom',
+					type = 'info'
+				})
 			end
 
 		end
