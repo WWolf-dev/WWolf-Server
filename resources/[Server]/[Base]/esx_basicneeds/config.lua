@@ -3,7 +3,7 @@ Config.Locale = GetConvar('esx:locale', 'en')
 Config.Visible = false
 
 Config.Items = {
-	["bread"] = {
+	["tosti"] = {
 		type = "food",
 		prop = "prop_cs_burger_01",
 		status = 200000,
